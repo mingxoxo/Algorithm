@@ -46,14 +46,14 @@ NODE** merge(NODE **L1, NODE **L2) {
 	NODE *L = NULL;
 	while ((*L1) != NULL && (*L2) != NULL) {
 		if (top(*L1) <= top(*L2))
-			push(&L, pop(&L1));
+			push(&L, pop(L1));
 		else
-			push(&L, pop(&L2));
+			push(&L, pop(L2));
 	}
 	while ((*L1) != NULL) 
-		push(&L, pop(&L1));
+		push(&L, pop(L1));
 	while ((*L2) != NULL)
-		push(&L, pop(&L2));
+		push(&L, pop(L2));
 	return &L;
 }
 
