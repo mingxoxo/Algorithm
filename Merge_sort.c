@@ -12,11 +12,18 @@ void getNode(NODE **p) {
 }
 
 void push(NODE **p, int n) {
-	NODE *tmp = NULL;
+	NODE *tmp = NULL, *tmp2 = (*p);
 	getNode(&tmp);
 	tmp->data = n;
-	tmp->next = (*p);
-	(*p) = tmp;
+	tmp->next = NULL;
+	if ((*p) == NULL) {
+		(*p) = tmp;
+		return;
+	}
+	while (tmp2->next != NULL && tmp2 != NULL) {
+		tmp2 = tmp2->next;
+	}
+	tmp2->next = tmp;
 }
 
 int pop(NODE **p) {
@@ -50,7 +57,7 @@ NODE** merge(NODE **L1, NODE **L2) {
 		else
 			push(&L, pop(L2));
 	}
-	while ((*L1) != NULL) 
+	while ((*L1) != NULL)
 		push(&L, pop(L1));
 	while ((*L2) != NULL)
 		push(&L, pop(L2));
@@ -82,4 +89,4 @@ void main() {
 		printf(" %d", node->data);
 		node = node->next;
 	}
-}//디버깅 
+}
