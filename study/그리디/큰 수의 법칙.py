@@ -11,6 +11,6 @@ second = data[n-2]
 if first == second:
   answer = m*first
 else:
-  answer = (m//k)*second + (m - (m//k))*first
+  answer = (m//(k+1))*second + (m - (m//(k+1)))*first
 
 print(answer)
