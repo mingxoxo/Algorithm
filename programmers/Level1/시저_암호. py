@@ -1,0 +1,11 @@
+#https://programmers.co.kr/learn/courses/30/lessons/12926
+def solution(s, n):
+    answer = ''
+    for i in list(s):
+        if 'a' <= i and i <= 'z': # == i.islower()
+            answer += chr(((ord(i)-97+n)%26 +97))
+        elif 'A' <= i and i <= 'Z': # == i.isupper()
+            answer += chr(((ord(i)-65+n)%26 +65))
+        else:
+            answer += ' '
+    return answer
