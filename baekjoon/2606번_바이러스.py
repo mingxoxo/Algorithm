@@ -14,9 +14,9 @@ def bfs(graph, visited, V=1 ):
             if visited[nextvirus] is False:
                 queue.append(nextvirus)
                 visited[nextvirus] = True
-            for i in range(len(graph)):
-                if nextvirus in graph[i]:
-                    graph[i].remove(nextvirus)
+#             for i in range(len(graph)):
+#                 if nextvirus in graph[i]:
+#                     graph[i].remove(nextvirus)
     return cnt
 
 
