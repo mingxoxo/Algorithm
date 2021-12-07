@@ -1,0 +1,7 @@
+git clone "SSH 주소"
+
+-------------------------
+
+git add .
+git commit -m "메세지 아무거나 입력"
+git push #origin master
