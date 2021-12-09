@@ -1,36 +1,32 @@
 #촌수계산
 #https://www.acmicpc.net/problem/2644
-#BFS_DFS로 푸는 것이 대부분인데 조금 비효율적으로 푼 것 같다.
+#이전에 DFS_BFS로 풀지 못해서 한번 더 품
 
-def relatives(graph, num1, num2):
-    result = -1
-    num1_list = [num1]
-    num2_list = [num2]
-    while num1 in graph.keys():
-        num1 = graph[num1]
-        num1_list.append(num1)
+from collections import deque
 
-    if num2 in num1_list:
-        return num2_list.index(num2) + num1_list.index(num2)
-
-    while num2 in graph.keys():
-        num2 = graph[num2]
-        num2_list.append(num2)
-        if num2 in num1_list:
-            result = num2_list.index(num2) + num1_list.index(num2)
-            break
-
-    return result
+def relatives_bfs(graph, num1, num2):
+    visited = [0] * (n+1)
+    queue = deque([num1])
+    while queue:
+        node = queue.popleft()
+        for i in graph[node-1]:
+            if visited[i] == 0:
+                queue.append(i)
+                visited[i] = 1 + visited[node]
+                if i == num2:
+                    return visited[num2]
+    return -1
 
 
 n = int(input()) #전체 사람의 수
 num1, num2 = map(int, input().split()) # 촌수를 계산해야 하는 서로 다른 두 사람의 번호
 
 m = int(input()) #부모 자식든 간의 관계의 개수
-graph = {}
+graph = [[] * n for i in range(n)]
 
 for i in range(m):
     node1, node2 = map(int, input().split())
-    graph[node2] = node1
+    graph[node2-1].append(node1)
+    graph[node1-1].append(node2)
 
-print(relatives(graph, num1, num2))
+print(relatives_bfs(graph, num1, num2))
