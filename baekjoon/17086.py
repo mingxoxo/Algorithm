@@ -1,6 +1,6 @@
 #아기상어2
 #https://www.acmicpc.net/problem/17086
-#python3로 돌리면 시간초과 / pypy3로 돌리면 통과지만 시간 오래걸림 (	134956KB / 1116ms )
+#python3로 통과 ( 33016KB / 112ms )
 
 from collections import deque
 
@@ -9,11 +9,12 @@ def positive_space(x, y):
         return True
     return False
 
-def safe_space(space, x, y):
+def safe_space(space, baby_shark):
     visited = [[0] * M for _ in range(N)]
-    queue = deque([(x, y)])
-    space[x][y] = 0
-    visited[x][y] = 1
+    queue = deque(baby_shark)
+    for x, y in baby_shark:
+        space[x][y] = 0
+        visited[x][y] = 1
 
     while queue:
         node = queue.popleft()
@@ -35,8 +36,7 @@ for i in range(N):
         baby_shark.append((i, j))
 
 safe = [[51] * M for _ in range(N)]
-for a, b in baby_shark:
-    safe = safe_space(safe, a, b)
+safe = safe_space(safe, baby_shark)
 
 print(max(map(max, safe)))
 
