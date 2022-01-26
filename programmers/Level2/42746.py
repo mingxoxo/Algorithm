@@ -9,7 +9,7 @@ def solution(numbers):
 
     max_len = len(str(max(numbers)))
     str_list = [str(i) for i in numbers]
-    str_list.sort(key = lambda x : x * 6, reverse = True)
+    str_list.sort(key = lambda x : x * 3, reverse = True)
     return ''.join(str_list)
                    
 #다른 사람의 풀이
