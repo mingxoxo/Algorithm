@@ -1,5 +1,5 @@
-#직각삼각형
-#https://www.acmicpc.net/problem/4153
+#터렛
+#https://www.acmicpc.net/problem/1002
 
 T = int(input())
 for i in range(T):
