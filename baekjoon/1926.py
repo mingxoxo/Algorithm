@@ -1,31 +1,23 @@
 #그림
 #BFS
-#시간초과
 #https://www.acmicpc.net/problem/1926
 
 import sys
 from collections import deque
 input = sys.stdin.readline
 
-def starting_point(paper, n, m):
-    for i in range(n):
-        for j in range(m):
-            if paper[i][j] == 1:
-                paper[i][j] = 0
-                return [(i, j)]
-    return []
-
-def BFS(paper, n, m):
+def BFS(paper, n, m, starting_point):
     dx = [-1, 1, 0, 0]
     dy = [0, 0, -1, 1]
-    cnt = 0
-    max_area = 0
-    while (1):
-        queue = deque(starting_point(paper, n, m))
-        if not queue:
-            break
+    cnt, max_area = 0, 0
+    while starting_point:
+        start_node = starting_point.popleft()
+        if paper[start_node[0]][start_node[1]] == 0:
+            continue
+        paper[start_node[0]][start_node[1]] = 0
         cnt += 1
         area = 1
+        queue = deque([start_node])
         while queue:
             node = queue.popleft()
             x, y = node[0], node[1]
@@ -42,10 +34,12 @@ def BFS(paper, n, m):
 
 def main():
     paper = []
+    starting_point = deque()
     n, m = map(int, input().split())
     for i in range(n):
         paper.append(list(map(int, input().split())))
-    cnt, max_area = BFS(paper, n, m)
+        starting_point.extend([(i, j) for j in range(m) if paper[-1][j] == 1])
+    cnt, max_area = BFS(paper, n, m, starting_point)
     print(cnt)
     print(max_area)
 
