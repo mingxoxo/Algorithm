@@ -1,31 +1,27 @@
 #스택 수열
 #https://www.acmicpc.net/problem/1874
 
+# 22.07.21
 import sys
+
 input = sys.stdin.readline
-
-N = int(input())
-sequence = []
-for i in range(N):
-    sequence.append(int(input()))
-
 stack = []
-calculation = []
+op = []
+flag = 1
+i = 1
 
-tmp = 1
+n = int(input())
+for _ in range(n):
+    k = int(input())
+    while i <= k:
+        stack.append(i)
+        op.append('+')
+        i += 1
+    element = stack.pop()
+    if element != k:
+        flag = 0
+        continue
+    op.append('-')
 
-for i in sequence:
-    while tmp <= i:
-        stack.append(tmp)
-        calculation.append('+')
-        tmp += 1
-    if stack and stack[-1] == i:
-        stack.pop()
-        calculation.append('-')
-
-if stack:
-    print("NO")
-else:
-    for c in calculation:
-        print(c)
+print(*op, sep='\n') if flag else print("NO")
 
