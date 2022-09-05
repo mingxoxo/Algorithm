@@ -1,4 +1,4 @@
-// 선택 정렬 (배열ver)
+// 선택 정렬 (배열ver2)
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,21 +12,21 @@ int	main(){
 	for(int i = 0; i < N; i++){
 		scanf("%d", str + i);
 	}
-	for(int i = N; i > 0; i--){
+	for(int i = N - 1; i > 0; i--)
+	{
 		max = 0;
-		for(int j = 1; j < i; j++){
+		for(int j = 1; j <= i; j++)
+		{
 			if(str[j] > str[max])
 				max = j;
-			if (j + 1 == i)
-			{
-				tmp = str[max];
-				str[max] = str[j];
-				str[j] = tmp;
-			}
 		}
+		tmp = str[max];
+		str[max] = str[i];
+		str[i] = tmp;
+
 	}
 	for(int i = 0; i < N; i++){
-		printf("%d ", str[i]);
+		printf(" %d", str[i]);
 	}
 	free(str);
 	return (0);
