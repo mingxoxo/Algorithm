@@ -1,33 +1,39 @@
-// 선택 정렬 (배열ver2)
+// 제자리 선택 정렬 (배열ver2)
 
 #include <stdio.h>
 #include <stdlib.h>
 
-int	main(){
-	int N = 0, max = 0, tmp = 0;
-	int *str = NULL;
+void selection_sort(int *arr, int N)
+{
+	int max = 0, tmp = 0;
 
-	scanf("%d", &N);
-	str = (int *)malloc(sizeof(int) * N);
-	for(int i = 0; i < N; i++){
-		scanf("%d", str + i);
-	}
 	for(int i = N - 1; i > 0; i--)
 	{
 		max = 0;
 		for(int j = 1; j <= i; j++)
 		{
-			if(str[j] > str[max])
+			if(arr[j] > arr[max])
 				max = j;
 		}
-		tmp = str[max];
-		str[max] = str[i];
-		str[i] = tmp;
+		tmp = arr[max];
+		arr[max] = arr[i];
+		arr[i] = tmp;
+	}
+}
 
-	}
+int	main(){
+	int N = 0;
+	int *arr = NULL;
+
+	scanf("%d", &N);
+	arr = (int *)malloc(sizeof(int) * N);
 	for(int i = 0; i < N; i++){
-		printf(" %d", str[i]);
+		scanf("%d", arr + i);
 	}
-	free(str);
+	selection_sort(arr, N);
+	for(int i = 0; i < N; i++){
+		printf(" %d", arr[i]);
+	}
+	free(arr);
 	return (0);
 }
