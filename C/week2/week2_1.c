@@ -1,4 +1,4 @@
-// 제자리 선택 정렬 (배열ver2)
+// 제자리 선택 정렬 (배열ver3)
 
 #include <stdio.h>
 #include <stdlib.h>
