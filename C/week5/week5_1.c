@@ -17,14 +17,14 @@ typedef struct LIST
 LIST *init_list(NODE *head, int n);
 NODE *make_new_node(int data);
 
-void push(LIST **L, int data);
-int pop(LIST **L);
+void push(LIST **L, NODE *node);
+NODE *pop(LIST **L);
 int top(LIST *L);
 
 LIST *partition_list(LIST *L, LIST **L2, int k);
 LIST *merge(LIST *L1, LIST *L2);
 LIST *mergeSort(LIST *L);
-
+void print_node(LIST *L);
 
 int main()
 {
@@ -37,7 +37,7 @@ int main()
     for(int i = 0; i < n; i++)
     {
         scanf("%d", &data);
-        push(&L, data);
+        push(&L, make_new_node(data));
     }
     L = mergeSort(L);
     print_node(L);
@@ -63,34 +63,32 @@ NODE *make_new_node(int data)
     return (new);
 }
 
-void push(LIST **L, int data)
+void push(LIST **L, NODE *node)
 {
-    NODE *new = NULL;
     NODE *last_node = NULL;
 
-    new = make_new_node(data);
     (*L)->size += 1;
     if ((*L)->head == NULL){
-        (*L)->head = new;
+        (*L)->head = node;
         return ;
     }
     last_node = (*L)->head;
     while (last_node->next)
         last_node = last_node->next;
-    last_node->next = new;
+    last_node->next = node;
 }
 
-int pop(LIST **L)
+NODE *pop(LIST **L)
 {
     int data;
 	NODE *d_node = NULL;
 	
     (*L)->size -= 1;
     d_node = (*L)->head;
-    data = (*L)->head->data;
-	(*L)->head = (*L)->head->next;
-	free(d_node);
-	return data;
+    (*L)->head = (*L)->head->next;
+    d_node->next = NULL;
+	
+	return d_node;
 }
 
 int top(LIST *L)
