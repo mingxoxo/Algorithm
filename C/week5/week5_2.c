@@ -1,10 +1,21 @@
-// 퀵 정렬 - 유일키 ver
+// 퀵정렬 - 중복키 ver
+
+/* 네델란드 국기 알고리즘 사용
+https://www.techiedelight.com/ko/quicksort-using-dutch-national-flag-algorithm/
+https://velog.io/@corone_hi/63.-Sort-Colors
+https://www.geeksforgeeks.org/3-way-quicksort-dutch-national-flag/
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
 
+typedef struct EQUAL{
+    int left;
+    int right;
+}EQ;
+
 int findPivot(int l, int r);
-int inPlacePartition(int *arr, int l, int r, int k);
+EQ inPlacePartition(int *arr, int l, int r, int k);
 void inPlaceQuickSort(int *arr, int left, int right);
 void swap(int *arr, int i, int j);
 void printArray(int *arr, int n);
@@ -28,41 +39,42 @@ int findPivot(int l, int r)
     return rand()%(r - l + 1) + l;
 }
 
-int inPlacePartition(int *arr, int l, int r, int k)
+EQ inPlacePartition(int *arr, int start, int end, int k)
 {
-    int i = 0, j = 0, pivot = 0;
+    EQ equal;
+    int mid = start;
+    int pivot = arr[k];
 
-    pivot = arr[k];
-    swap(arr, k, r);
-    i = l;
-    j = r - 1;
-
-    while (i <= j)
+    while (mid <= end)
     {
-        while (i <= j && arr[i] <= pivot){
-            i++;
+        if (arr[mid] < pivot){
+            swap(arr, start, mid);
+            start += 1;
+            mid += 1;
         }
-        while (i <= j && arr[j] >= pivot){
-            j--;
+        else if (arr[mid] > pivot){
+            swap(arr, end, mid);
+            end -= 1;
         }
-        if (i < j)
-            swap(arr, i, j);
+        else
+            mid += 1;
     }
-    swap(arr, i, r);
-    return i;
+    equal.left = start;
+    equal.right = mid - 1;
+    return equal;
 }
 
 void inPlaceQuickSort(int *arr, int left, int right)
 {
     int k;
-    int eq;
+    EQ equal;
 
     if (left >= right)
         return ;
     k = findPivot(left, right);
-    eq = inPlacePartition(arr, left, right, k);
-    inPlaceQuickSort(arr, left, eq - 1);
-    inPlaceQuickSort(arr, eq + 1, right);
+    equal = inPlacePartition(arr, left, right, k);
+    inPlaceQuickSort(arr, left, equal.left - 1);
+    inPlaceQuickSort(arr, equal.right + 1, right);
 }
 
 void printArray(int *arr, int n)
