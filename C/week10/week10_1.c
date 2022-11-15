@@ -4,11 +4,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct s_vertice{
+typedef struct s_vertex{
     int data;
     struct s_NtoE *ntoe;
-    struct s_vertice *next;
-}t_vertice;
+    struct s_vertex *next;
+}t_vertex;
 
 typedef struct s_NtoE{
     struct s_edge *edge;
@@ -17,20 +17,20 @@ typedef struct s_NtoE{
 
 typedef struct s_edge{
     int weight;
-    struct s_vertice *v1;
-    struct s_vertice *v2;
+    struct s_vertex *v1;
+    struct s_vertex *v2;
     struct s_edge *next;
 }t_edge;
 
-// vertice 초기화, 추가, 탐색 (header X)
-t_vertice *init_vertice(int data);
-void addLast_vertice(t_vertice **head, int data);
-t_vertice *find_vertice(t_vertice *node, int data);
+// vertex 초기화, 추가, 탐색 (header X)
+t_vertex *init_vertex(int data);
+void addLast_vertex(t_vertex **head, int data);
+t_vertex *find_vertex(t_vertex *node, int data);
 
 // edge 초기화, 추가, 탐색 (header X)
-t_edge *init_edge(t_vertice *v1, t_vertice *v2, int w);
-t_edge *addLast_edge(t_edge **head, t_vertice *v1, t_vertice *v2, int w);
-t_edge *find_edge(t_edge *node, t_vertice *v1, t_vertice *v2);
+t_edge *init_edge(t_vertex *v1, t_vertex *v2, int w);
+t_edge *addLast_edge(t_edge **head, t_vertex *v1, t_vertex *v2, int w);
+t_edge *find_edge(t_edge *node, t_vertex *v1, t_vertex *v2);
 
 // NtoE 초기화, 추가 (header O)
 // NtoE는 추가할 때 node number 오름차순 정렬
@@ -38,17 +38,17 @@ t_NtoE *init_NtoE(t_edge *edge);
 void add_NtoE(t_NtoE *head, t_edge *edge, int data, int check);
 
 // 그래프 생성, cmd_a, cmd_d
-void makeGraph(int info[8][3], t_vertice **vertices, t_edge **edges);
-void print_NtoE(t_vertice *head, int data);
-void update_edge(t_vertice *vertices, t_edge **edges, int vnum1, int vnum2, int w);
+void makeGraph(int info[8][3], t_vertex **vertices, t_edge **edges);
+void print_NtoE(t_vertex *head, int data);
+void update_edge(t_vertex *vertices, t_edge **edges, int vnum1, int vnum2, int w);
 void delete_NtoE(t_edge *edge, t_NtoE *head);
-void delete_edge(t_edge **head, t_vertice *v1, t_vertice *v2);
+void delete_edge(t_edge **head, t_vertex *v1, t_vertex *v2);
 
 
 int main() {
     char cmd;
 	int data, v1, v2, w;
-    t_vertice *vertices = NULL; 
+    t_vertex *vertices = NULL; 
     t_edge *edges = NULL;
 	int info[8][3] = {{1,1,2},{1,1,3},{1,1,4},{2,1,6},{1,2,3},{4,3,5},{4,5,5},{3,5,6}};
     
@@ -69,10 +69,10 @@ int main() {
 	return (0);
 }
 
-t_vertice *init_vertice(int data){
-    t_vertice *new = NULL;
+t_vertex *init_vertex(int data){
+    t_vertex *new = NULL;
 
-    new = (t_vertice *)malloc(sizeof(t_vertice));
+    new = (t_vertex *)malloc(sizeof(t_vertex));
     new->data = data;
     new->ntoe = (t_NtoE *)malloc(sizeof(t_NtoE));
     new->ntoe->edge = NULL;
@@ -81,12 +81,12 @@ t_vertice *init_vertice(int data){
     return (new);
 }
 
-void addLast_vertice(t_vertice **head, int data)
+void addLast_vertex(t_vertex **head, int data)
 {
-    t_vertice *new = NULL;
-    t_vertice *last = NULL;
+    t_vertex *new = NULL;
+    t_vertex *last = NULL;
 
-    new = init_vertice(data);
+    new = init_vertex(data);
     if (*head == NULL){
         *head = new;
         return ;
@@ -97,7 +97,7 @@ void addLast_vertice(t_vertice **head, int data)
     last->next = new;
 }
 
-t_vertice *find_vertice(t_vertice *node, int data){
+t_vertex *find_vertice(t_vertex *node, int data){
     while (node)
 	{
 	    if (data == node->data)
@@ -108,7 +108,7 @@ t_vertice *find_vertice(t_vertice *node, int data){
 }
 
 
-t_edge *init_edge(t_vertice *v1, t_vertice *v2, int w){
+t_edge *init_edge(t_vertex *v1, t_vertex *v2, int w){
     t_edge *new = NULL;
 
     new = (t_edge *)malloc(sizeof(t_edge));
@@ -119,7 +119,7 @@ t_edge *init_edge(t_vertice *v1, t_vertice *v2, int w){
     return (new);
 }
 
-t_edge *addLast_edge(t_edge **head, t_vertice *v1, t_vertice *v2, int w)
+t_edge *addLast_edge(t_edge **head, t_vertex *v1, t_vertex *v2, int w)
 {
     t_edge *new = NULL;
     t_edge *last = NULL;
@@ -136,7 +136,7 @@ t_edge *addLast_edge(t_edge **head, t_vertice *v1, t_vertice *v2, int w)
     return (new);
 }
 
-t_edge *find_edge(t_edge *node, t_vertice *v1, t_vertice *v2){
+t_edge *find_edge(t_edge *node, t_vertex *v1, t_vertex *v2){
     while (node)
 	{
 	    if (node->v1 == v1 && node->v2 == v2)
@@ -183,12 +183,12 @@ void add_NtoE(t_NtoE *head, t_edge *edge, int data, int check)
 }
 
 
-void makeGraph(int info[8][3], t_vertice **vertices, t_edge **edges) {
-    t_vertice *v1 = NULL, *v2 = NULL;
+void makeGraph(int info[8][3], t_vertex **vertices, t_edge **edges) {
+    t_vertex *v1 = NULL, *v2 = NULL;
     t_edge *new = NULL;
     
 	for (int i = 1; i <= 6; i++) {
-		addLast_vertice(vertices, i);
+		addLast_vertex(vertices, i);
 	}
 	
 	for (int i = 0; i < 8; i++) {
@@ -201,9 +201,9 @@ void makeGraph(int info[8][3], t_vertice **vertices, t_edge **edges) {
 	}
 }
 
-void print_NtoE(t_vertice *head, int data){
+void print_NtoE(t_vertex *head, int data){
     t_NtoE *ntoe = NULL;
-    t_vertice *v = find_vertice(head, data);
+    t_vertex *v = find_vertice(head, data);
     
     if (v == NULL){
         printf("-1\n");
@@ -221,8 +221,8 @@ void print_NtoE(t_vertice *head, int data){
     printf("\n");
 }
 
-void update_edge(t_vertice *vertices, t_edge **edges, int vnum1, int vnum2, int w){
-    t_vertice *v1 = NULL, *v2 = NULL;
+void update_edge(t_vertex *vertices, t_edge **edges, int vnum1, int vnum2, int w){
+    t_vertex *v1 = NULL, *v2 = NULL;
     t_edge *edge = NULL, *new = NULL;
     
     v1 = find_vertice(vertices, vnum1);
@@ -269,7 +269,7 @@ void delete_NtoE(t_edge *edge, t_NtoE *head){
     }
 }
 
-void delete_edge(t_edge **head, t_vertice *v1, t_vertice *v2){
+void delete_edge(t_edge **head, t_vertex *v1, t_vertex *v2){
     t_edge *prev = NULL;
     t_edge *delete = NULL;
     
