@@ -8,18 +8,10 @@
 # define NONDAG 'N'
 # define DAG 'Y'
 
-typedef enum label{
-    FRESH,
-    VISITED,
-    TREE,
-    BACK
-}LABEL;
-
 typedef struct s_vertex{
     int num;
     int indegree;
-    char data;
-    LABEL label;
+    char name;
     struct s_NtoE *ntoe;
     struct s_vertex *next;
 }t_vertex;
@@ -30,7 +22,6 @@ typedef struct s_NtoE{
 }t_NtoE;
 
 typedef struct s_edge{
-    LABEL label;
     struct s_vertex *v1;
     struct s_vertex *v2;
     struct s_edge *next;
@@ -42,10 +33,10 @@ typedef struct s_node{
 }t_node;
 
 // vertex 초기화, 추가, 탐색 (header X)
-t_vertex *init_vertex(char data, int num);
+t_vertex *init_vertex(char name, int num);
 void addLast_vertex(t_vertex **head, char , int num);
-t_vertex *find_vertex(t_vertex *node, char data);
-t_vertex *opposite_vertex(t_edge *edge, char data);
+t_vertex *find_vertex(t_vertex *node, char name);
+t_vertex *opposite_vertex(t_edge *edge, char name);
 
 // edge 초기화, 추가, 탐색 (header X)
 t_edge *init_edge(t_vertex *v1, t_vertex *v2);
@@ -54,42 +45,26 @@ t_edge *find_edge(t_edge *node, t_vertex *v1, t_vertex *v2);
 
 // NtoE 초기화, 추가 (header O)
 t_NtoE *init_NtoE(t_edge *edge);
-void add_NtoE(t_NtoE *head, t_edge *edge, char data);
+void add_NtoE(t_NtoE *head, t_edge *edge, char name);
 
 // queue
 t_node *init_node(t_vertex *v);
 void enqueue(t_node **queue, t_vertex *v);
 t_vertex *dequeue(t_node **queue);
 
-void topologicalSort(t_vertex *head, char *topOrder, int n);
+void buildGraph(t_vertex **vertices, t_edge **edges);
+void topologicalSort(t_vertex *head, char *topOrder);
 
-void print_indegree(t_vertex *ver);
-void print_NtoE(t_vertex *head, char data);
+int n, m;
 
 int main() {
-	int n, m;
-    char v, vname1, vname2;
-    t_vertex *vertices = NULL, *v1 = NULL, *v2 = NULL;
-    t_edge *edges = NULL, *new = NULL;
+    t_vertex *vertices = NULL;
+    t_edge *edges = NULL;
     char *topOrder = NULL;
 
-    scanf("%d", &n); getchar();
-	for (int i = 1; i <= n; i++) {
-        scanf("%c", &v); getchar();
-		addLast_vertex(&vertices, v, i);
-	}
-	
-    scanf("%d", &m); getchar();
-	for (int i = 0; i < m; i++) {
-        scanf("%c %c", &vname1, &vname2); getchar();
-	    v1 = find_vertex(vertices, vname1);
-	    v2 = find_vertex(vertices, vname2);
-		new = addLast_edge(&edges, v1, v2);
-		add_NtoE(v1->ntoe, new, v1->data);
-        v2->indegree++;
-    }
+    buildGraph(&vertices, &edges);
     topOrder = (char *)malloc(sizeof(char) * (n + 1));
-    topologicalSort(vertices, topOrder, n);
+    topologicalSort(vertices, topOrder);
     if (topOrder[0] == NONDAG)
         printf("0\n");
     else{
@@ -100,7 +75,7 @@ int main() {
 	return (0);
 }
 
-void topologicalSort(t_vertex *head, char *topOrder, int n)
+void topologicalSort(t_vertex *head, char *topOrder)
 {
     int order = 1;
     t_node *queue = NULL;
@@ -116,11 +91,11 @@ void topologicalSort(t_vertex *head, char *topOrder, int n)
 
     while (queue){
         ver = dequeue(&queue);
-        topOrder[order] = ver->data;
+        topOrder[order] = ver->name;
         order++;
         ntoe = ver->ntoe->next;
         while(ntoe){
-            w = opposite_vertex(ntoe->edge, ver->data);
+            w = opposite_vertex(ntoe->edge, ver->name);
             w->indegree--;
             if (w->indegree == 0)
                 enqueue(&queue, w);
@@ -133,14 +108,37 @@ void topologicalSort(t_vertex *head, char *topOrder, int n)
         topOrder[0] = DAG;
 }
 
-t_vertex *init_vertex(char data, int num){
+void buildGraph(t_vertex **vertices, t_edge **edges){
+    char vName, wName;
+    t_vertex *v = NULL, *w = NULL;
+    t_edge *new = NULL;
+
+    scanf("%d", &n); getchar();
+	for (int i = 1; i <= n; i++) {
+        scanf("%c", &vName); getchar();
+		addLast_vertex(vertices, vName, i);
+	}
+	
+    scanf("%d", &m); getchar();
+	for (int i = 0; i < m; i++) {
+        scanf("%c %c", &vName, &wName); getchar();
+	    v = find_vertex(*vertices, vName);
+	    w = find_vertex(*vertices, wName);
+		new = addLast_edge(edges, v, w);
+		add_NtoE(v->ntoe, new, v->name);
+        w->indegree++;
+    }
+}
+
+
+
+t_vertex *init_vertex(char name, int num){
     t_vertex *new = NULL;
 
     new = (t_vertex *)malloc(sizeof(t_vertex));
     new->num = num;
-    new->data = data;
+    new->name = name;
     new->indegree = 0;
-    new->label = FRESH;
     new->ntoe = (t_NtoE *)malloc(sizeof(t_NtoE));
     new->ntoe->edge = NULL;
     new->ntoe->next = NULL;
@@ -148,12 +146,12 @@ t_vertex *init_vertex(char data, int num){
     return (new);
 }
 
-void addLast_vertex(t_vertex **head, char data, int num)
+void addLast_vertex(t_vertex **head, char name, int num)
 {
     t_vertex *new = NULL;
     t_vertex *last = NULL;
 
-    new = init_vertex(data, num);
+    new = init_vertex(name, num);
     if (*head == NULL){
         *head = new;
         return ;
@@ -164,18 +162,18 @@ void addLast_vertex(t_vertex **head, char data, int num)
     last->next = new;
 }
 
-t_vertex *find_vertex(t_vertex *node, char data){
+t_vertex *find_vertex(t_vertex *node, char name){
     while (node)
 	{
-	    if (data == node->data)
+	    if (name == node->name)
 	        return (node);
 	    node = node->next;
 	}
 	return (NULL);
 }
 
-t_vertex *opposite_vertex(t_edge *edge, char data){
-    if (edge->v1->data == data)
+t_vertex *opposite_vertex(t_edge *edge, char name){
+    if (edge->v1->name == name)
         return edge->v2;
     return edge->v1;
 }
@@ -185,7 +183,6 @@ t_edge *init_edge(t_vertex *v1, t_vertex *v2){
     t_edge *new = NULL;
 
     new = (t_edge *)malloc(sizeof(t_edge));
-    new->label = FRESH;
     new->v1 = v1;
     new->v2 = v2;
     new->next = NULL;
@@ -231,7 +228,7 @@ t_NtoE *init_NtoE(t_edge *edge){
     return (new);
 }
 
-void add_NtoE(t_NtoE *head, t_edge *edge, char data)
+void add_NtoE(t_NtoE *head, t_edge *edge, char name)
 {
     t_NtoE *new = NULL;
     t_NtoE *prev = NULL;
@@ -274,31 +271,4 @@ t_vertex *dequeue(t_node **queue){
     v = delete->v;
     (*queue) = delete->next;
     return v;
-}
-
-void print_indegree(t_vertex *ver){
-    while (ver){
-        printf(" %c %d\n", ver->data, ver->indegree);
-        ver = ver->next;
-    }
-}
-
-void print_NtoE(t_vertex *head, char data){
-    t_NtoE *ntoe = NULL;
-    t_vertex *v = find_vertex(head, data);
-    
-    if (v == NULL){
-        printf("-1\n");
-        return ;
-    }
-    
-    ntoe = v->ntoe->next;
-    while (ntoe){
-        if (ntoe->edge->v1->data == data)
-            printf(" %c", ntoe->edge->v2->data);
-        else if (ntoe->edge->v2->data == data)
-            printf(" %c", ntoe->edge->v1->data);
-        ntoe = ntoe->next;
-    }
-    printf("\n");
 }
