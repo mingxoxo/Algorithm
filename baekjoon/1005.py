@@ -1,39 +1,33 @@
 # ACM Craft
 # 22.11.23
-# 위상정렬(Topology Sort)
+# 위상정렬(Topology Sort)- heapq ver
 # https://www.acmicpc.net/problem/1005
 
 
 import sys
-from collections import deque
 from collections import defaultdict
-
+from heapq import heappush, heappop
 input = sys.stdin.readline
 
 
 def topologySort(graph, N, indegree, time, W):
-    total_time = [0] * (N + 1)
-    queue = deque()
+    heap = []
 
     # queue 초기화
     for v in range(1, N + 1):
         if indegree[v] == 0:
-            queue.append(v)
-            total_time[v] = time[v]
+            heappush(heap, (time[v], v))
 
-    while queue:
-        n = queue.popleft()
+    while heap:
+        t, n = heappop(heap)
         if n == W:
-            return total_time[n]
-        for v in graph["out"][n]:
+            return t
+        for v in graph[n]:
             indegree[v] -= 1
-            total_time[v] = max(total_time[v], total_time[n] + time[v])
             if indegree[v] == 0:
-                queue.append(v)
+                heappush(heap, (t + time[v], v))
 
-    return total_time[n]
-
-
+    return -1
 
 
 T = int(input())
@@ -41,11 +35,10 @@ for _ in range(T):
     N, K = map(int, input().split())
     time = [0] + list(map(int, input().split()))
     indegree = [0] * (N + 1)
-    graph = { key: [[] for j in range(N + 1)] for key in ["in", "out"]}
+    graph = defaultdict(list)
     for _ in range(K):
         X, Y = map(int, input().split())
-        graph["out"][X].append(Y)
-        graph["in"][Y].append(X)
+        graph[X].append(Y)
         indegree[Y] += 1
     W = int(input())
     print(topologySort(graph, N, indegree, time, W))
