@@ -1,6 +1,6 @@
 # N과 M (7)
 # 백트래킹
-# 22.11.01
+# 22.12.17
 # https://www.acmicpc.net/problem/15656
 
 import sys
