@@ -1,12 +1,12 @@
 # 알파벳
-# 23.02.10
+# 24.02.29
 # 백트래킹, DFS - Pypy3
 # https://www.acmicpc.net/problem/1987
 
 import sys
 input = sys.stdin.readline
 
-result = 0
+result = 1
 R, C = map(int, input().split())
 
 def dfs(board, charset, x, y, cnt):
